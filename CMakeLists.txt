@@ -7,7 +7,7 @@ using FTXUI gauge/progress for terminal screen status output")
 include(GNUInstallDirs)
 
 set(CMAKE_C_STANDARD 99)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_options(-march=native -O3)
 add_compile_options(-D_FILE_OFFSET_BITS=64)
@@ -22,6 +22,6 @@ add_link_options(-Wl,-s)
 
 add_executable(${PROJECT_NAME} ${PROJECT_NAME}_ftxui.cpp ${PROJECT_NAME}.c)
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-target_link_libraries(${PROJECT_NAME} PUBLIC -lftxui-dom -lftxui-component -lftxui-screen)
+target_link_libraries(${PROJECT_NAME} PUBLIC -lftxui-component -lftxui-dom  -lftxui-screen)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})

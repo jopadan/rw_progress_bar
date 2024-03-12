@@ -5,16 +5,21 @@
 #include <filesystem>
 #include <vector>
 #include <memory>
+#include <cstdlib>
+#include <cstdio>
 #include <ftxui/dom/elements.hpp>   // for text, gauge, operator|, flex, hbox, Element
 #include <ftxui/screen/screen.hpp>  // for Screen
-#include <ftxui/dom/node.hpp>       // for Render
-#include "cpvg.h"
+#include "ftxui/dom/node.hpp"       // for Render
+#include "ftxui/screen/color.hpp"   // for ftxui
 
-EXTERNC size_t cpvg(const char* src, size_t block_size, const char* dst)
+using namespace std::filesystem;
+using namespace ftxui;
+using namespace std::chrono_literals;
+
+const size_t CPVG_BLOCK_SIZE = (2 << 12) * (2 << 5);
+
+size_t cpvg(const char* src, const char* dst, size_t block_size = CPVG_BLOCK_SIZE)
 {
-	using namespace std::filesystem;
-	using namespace ftxui;
-	using namespace std::chrono_literals;
 	std::filesystem::path psrc(std::filesystem::canonical(src));
 	std::filesystem::path pdst(std::filesystem::canonical(dst));
 	std::string reset_position;
@@ -68,3 +73,16 @@ EXTERNC size_t cpvg(const char* src, size_t block_size, const char* dst)
 	free(buf);
 	return transfered;
 }
+
+int main(int argc, char** argv)
+{
+	if(argc < 3)
+	{
+		fprintf(stderr, "Usage: %s SRC DST [BLK]\n", argv[0]);
+		exit(EXIT_FAILURE);
+	}
+
+	exit(file_size(argv[1]) == cpvg(argv[1], argv[2], argc > 3 ? (size_t)strtouq(argv[3], NULL, 10) : CPVG_BLOCK_SIZE)
+	     ? EXIT_SUCCESS : EXIT_FAILURE);
+}
+
